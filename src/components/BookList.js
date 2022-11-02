@@ -1,30 +1,60 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function BookList(){
-  const [livres, setLivres] = useState(
-    [
-      {
-        id : 1,
-        titre : "The slight edge",
-        auteur : "jeff Olsen",
-        prix : 12.50
-      },
-      {
-        id : 2,
-        titre : "Power of habits",
-        auteur : "Charles Duhigg",
-        prix : 18.00},
-      {
-        id : 3,
-        titre : "Atomic habits",
-        auteur : "James Clear",
-        prix : 20.00
+  const [livres, setLivres] = useState([]);
+
+  useEffect(
+    ()=>{
+      async function loadBooks(){
+        const reponse = await fetch("http://localhost:3000/books");
+        const books = await reponse.json();
+        setLivres(books);
       }
-    ]
-  );
+      loadBooks();
+    }
+  , []);
+
+  //fetch(url, {method : 'DELETE'})
+  const deleteBook = (id)=>{
+    console.log("http://localhost:3000/books/"+id);
+    if(window.confirm("Êtes-vous sûre de vouloir supprimer le livre?")){
+      fetch("http://localhost:3000/books/"+id, {method : 'DELETE'})
+      .then(reponse=>setLivres(livres.filter(l=>l.id!==id)))
+    }
+  }
 
   return <div className="row">
       <h2>Liste des livres</h2>
+
+      <button className="btn btn-success col-3" >Ajouter un livre</button>
+      <table className="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">First</th>
+          <th scope="col">Last</th>
+          <th scope="col">Handle</th>
+          <th scope="col">Editer</th>
+          <th scope="col">Supprimer</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          livres.map(
+            livre => <tr key={livre.id}>
+                        <th scope="row">{livre.id}</th>
+                        <td>{livre.titre}</td>
+                        <td>{livre.auteur}</td>
+                        <td>{livre.prix}</td>
+                        <td><button className="btn btn-primary" >Editer</button></td>
+                        <td><button className="btn btn-danger" onClick={()=>deleteBook(livre.id)} >Supprimer</button></td>
+                      </tr>
+          )
+
+        }
+      </tbody>
+    </table>
+
 
     </div>
 }
