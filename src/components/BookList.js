@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 
 function BookList(){
   const [livres, setLivres] = useState([]);
@@ -26,7 +27,11 @@ function BookList(){
   return <div className="row">
       <h2>Liste des livres</h2>
 
-      <button className="btn btn-success col-3" >Ajouter un livre</button>
+      <Link
+        className="btn btn-success col-3"
+        to={'/books/add'}>
+        Ajouter un livre
+      </Link>
       <table className="table table-striped">
       <thead>
         <tr>
